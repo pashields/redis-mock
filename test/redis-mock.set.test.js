@@ -84,21 +84,17 @@ describe("single set ops", function () {
         it("should be able to contain two different items", function(done) {
             var r = redismock.createClient("", "", "");
 
-            r.sadd(testKey, testElem, function(err, result) {
-                result.should.equal(1);
+            r.sadd(testKey, [testElem, testElem2], function(err, result) {
+                result.should.equal(2);
 
-                r.sadd(testKey, testElem2, function(err, result) {
-                    result.should.equal(1);
+                r.smembers(testKey, function(err, result) {
+                    result.should.have.lengthOf(2);
+                    result.should.include(testElem);
+                    result.should.include(testElem2);
 
-                    r.smembers(testKey, function(err, result) {
-                        result.should.have.lengthOf(2);
-                        result.should.include(testElem);
-                        result.should.include(testElem2);
+                    r.end();
 
-                        r.end();
-
-                        done();
-                    });
+                    done();
                 });
             });
         });
